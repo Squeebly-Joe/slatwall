@@ -345,7 +345,6 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 	// =====================  END: Logical Methods ============================
 
 	// ===================== START: DAO Passthrough ===========================
-
 	public array function getUnusedProductSubscriptionTerms( required string productID ){
 		return getSubscriptionDAO().getUnusedProductSubscriptionTerms( argumentCollection=arguments );
 	}
@@ -365,7 +364,10 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 	public any function getSubscriptionUsageForRenewalReminder() {
 		return getSubscriptionDAO().getSubscriptionUsageForRenewalReminder();
 	}
-
+    
+    public any function updateSubscriptionUsagesBenefits( required subscriptionUsagesList , required subscriptionBenefit){
+    	return getSubscriptionDAO().updateSubscriptionUsagesBenefits();
+    }
 	// ===================== START: DAO Passthrough ===========================
 
 	// ===================== START: Process Methods ===========================
