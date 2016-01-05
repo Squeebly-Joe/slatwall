@@ -28,6 +28,7 @@ component output="false" accessors="true" extends="HibachiController" {
 	this.publicMethods=listAppend(this.publicMethods, 'login');
 	this.publicMethods=listAppend(this.publicMethods, 'getResourceBundle');
 	this.publicMethods=listAppend(this.publicMethods, 'getCurrencies');
+	this.publicMethods=listAppend(this.publicMethods, 'getModel');
 	
 	//	this.secureMethods='';
 	//	this.secureMethods=listAppend(this.secureMethods, 'get');
@@ -113,7 +114,7 @@ component output="false" accessors="true" extends="HibachiController" {
 	
 	public any function getDetailTabs(required struct rc){
 		var detailTabs = [];
-		var tabsDirectory = expandPath( '/' ) & 'admin/client/partials/entity/#lcase(rc.entityName)#/';
+		var tabsDirectory = expandPath( '/' ) & 'org/Hibachi/client/src/entity/components/#lcase(rc.entityName)#/';
 		var tabFilesList = directorylist(tabsDirectory,false,'query','*.html');
 		for(var tabFile in tabFilesList){
 			var tab = {};
@@ -179,7 +180,7 @@ component output="false" accessors="true" extends="HibachiController" {
 		
 	}
 	public any function getObjectOptions(required struct rc){
-		var data = getHibachiCollectionService().getObjectOptions();
+		var data = getService('hibachiCollectionService').getObjectOptions();
 		arguments.rc.apiResponse.content = {data=data};
 	}
 	
@@ -199,7 +200,7 @@ component output="false" accessors="true" extends="HibachiController" {
 				defaultColumns=false
 			};
 		
-		var collectionEntity = getHibachiCollectionService().getTransientCollectionByEntityName('collection',collectionOptions);
+		var collectionEntity = getService('hibachiCollectionService').getTransientCollectionByEntityName('collection',collectionOptions);
 		var collectionConfigStruct = collectionEntity.getCollectionConfigStruct();
 		collectionConfigStruct.columns = [
 			{
@@ -368,6 +369,110 @@ component output="false" accessors="true" extends="HibachiController" {
 		arguments.rc.apiResponse.content['data'] = eventNameOptions;
 	}
 	
+	private void function formatEntity(required any entity, required any model){
+		
+		model.entities[entity.getClassName()] = entity.getPropertiesStruct();
+		model.entities[entity.getClassName()]['className'] = entity.getClassName();
+		
+		var metaData = getMetaData(entity);
+		var isProcessObject = Int(Find('_',entity.getClassName()) gt 0);
+		
+		if (structKeyExists(metaData,'hb_parentPropertyName')){
+			model.entities[entity.getClassName()]['hb_parentPropertyName'] = metaData.hb_parentPropertyName;
+		}
+		if(structKeyExists(metaData,'hb_childPropertyName')){
+			model.entities[entity.getClassName()]['hb_childPropertyName'] = metaData.hb_childPropertyName;
+		}
+		
+		model.validations[entity.getClassName()] = getHibachiScope().getService('hibachiValidationService').getValidationStruct(entity);
+		model.defaultValues[entity.getClassName()] = {};
+		
+		
+		for(var property in entity.getProperties()){
+			//<!--- Make sure that this property is a persistent one --->
+			if (!structKeyExists(property, "persistent") && ( !structKeyExists(property,"fieldtype") || listFindNoCase("column,id", property.fieldtype) )){
+				if(!isProcessObject){
+					try{
+						var defaultValue = entity.invokeMethod('get#property.name#');
+					}catch(any e){
+						defaultValue = javacast('null','');
+					}
+					if (isNull(local.defaultValue)){
+						model.defaultValues[entity.getClassName()][property.name] = javacast('null','');
+					}else if (structKeyExists(local.property, "ormType") and listFindNoCase('boolean,int,integer,float,big_int,big_decimal', local.property.ormType)){
+						model.defaultValues[entity.getClassName()][property.name] = defaultValue;
+					}else if (structKeyExists(local.property, "ormType") and listFindNoCase('string', local.property.ormType)){
+						if(structKeyExists(local.property, "hb_formFieldType") and local.property.hb_formFieldType eq "json"){
+							model.defaultValues[entity.getClassName()][property.name] = deserializeJson(defaultValue);
+						}else{
+							model.defaultValues[entity.getClassName()][property.name] = defaultValue;
+						}
+					}else if(structKeyExists(local.property, "ormType") and local.property.ormType eq 'timestamp'){
+						model.defaultValues[entity.getClassName()][property.name] = defaultValue;
+					}else{
+						model.defaultValues[entity.getClassName()][property.name] = defaultValue;
+					}
+				}else{
+					try{
+						var defaultValue = entity.invokeMethod('get#property.name#');
+					}catch(any e){
+						defaultValue = javacast('null','');
+					}
+					if (!isNull(defaultValue)){
+						if(isObject(defaultValue)){
+							model.defaultValues[entity.getClassName()][property.name] = '';
+						}else{
+							if(isStruct(defaultValue)){
+								model.defaultValues[entity.getClassName()][property.name] = defaultValue;
+							}else{
+								model.defaultValues[entity.getClassName()][property.name] = '#defaultValue#';
+							}
+						}
+						
+					}else{
+						//model.defaultValues[entity.getClassName()][property.name] = '#defaultValue#';
+					}
+				}
+			}
+		}
+	}
+	
+	public any function getModel(required struct rc){
+		var model = {};
+		if(!request.slatwallScope.hasApplicationValue('objectModel')){
+			var entities = [];
+			var processContextsStruct = rc.$[#getDao('hibachiDao').getApplicationKey()#].getService('hibachiService').getEntitiesProcessContexts();
+			var entitiesListArray = listToArray(structKeyList(rc.$[#getDao('hibachiDao').getApplicationKey()#].getService('hibachiService').getEntitiesMetaData()));
+			
+			
+			model['entities'] = {};
+			model['validations'] = {};
+			model['defaultValues'] = {};
+			
+			for(var entityName in entitiesListArray) {
+				var entity = rc.$[#getDao('hibachiDao').getApplicationKey()#].getService('hibachiService').getEntityObject(entityName);
+				
+				formatEntity(entity,model);
+				//add process objects to the entites array
+				if(structKeyExists(processContextsStruct,entityName)){
+					var processContexts = processContextsStruct[entityName];
+					for(var processContext in processContexts){
+						if(entity.hasProcessObject(processContext)){
+							
+							formatEntity(entity.getProcessObject(processContext),model);
+						}
+						
+					}
+				}
+			}
+			
+			ORMClearSession();
+			request.slatwallScope.setApplicationValue('objectModel',model);
+		}
+		model = request.slatwallScope.getApplicationValue('objectModel');
+		arguments.rc.apiResponse.content['data'] = model;
+	}
+	
 	public any function get( required struct rc ) {
 		/* TODO: handle filter parametes, add Select statements as list to access one-to-many relationships.
 			create a base default properties function that can be overridden at the entity level via function
@@ -461,22 +566,23 @@ component output="false" accessors="true" extends="HibachiController" {
 			//considering using all url variables to create a transient collectionConfig for api response
 			if(!structKeyExists(arguments.rc,'entityID')){
 				//should be able to add select and where filters here
-				var result = getHibachiCollectionService().getAPIResponseForEntityName(	arguments.rc.entityName,
+				var result = getService('hibachiCollectionService').getAPIResponseForEntityName(	arguments.rc.entityName,
 																			collectionOptions);
 				
 				structAppend(arguments.rc.apiResponse.content,result);
 			}else{
+				
+				var collectionEntity = getService('hibachiCollectionService').getCollectionByCollectionID(arguments.rc.entityID);
 				//figure out if we have a collection or a basic entity
-				var collectionEntity = getHibachiCollectionService().getCollectionByCollectionID(arguments.rc.entityID);
 				if(isNull(collectionEntity)){
 					//should only be able to add selects (&propertyIdentifier=)
-					var result = getHibachiCollectionService().getAPIResponseForBasicEntityWithID(arguments.rc.entityName,
+					var result = getService('hibachiCollectionService').getAPIResponseForBasicEntityWithID(arguments.rc.entityName,
 																				arguments.rc.entityID,
 																				collectionOptions);
 					structAppend(arguments.rc.apiResponse.content,result);
 				}else{
 					//should be able to add select and where filters here
-					var result = getHibachiCollectionService().getAPIResponseForCollection(	collectionEntity,
+					var result = getService('hibachiCollectionService').getAPIResponseForCollection(	collectionEntity,
 																				collectionOptions);
 					structAppend(arguments.rc.apiResponse.content,result);
 				}
@@ -654,3 +760,4 @@ component output="false" accessors="true" extends="HibachiController" {
 		*/
 	
 }
+

@@ -50,7 +50,6 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 
 	property name="orderDAO" type="any";
 	property name="subscriptionDAO" type="any";
-
 	property name="accessService" type="any";
 	property name="emailService" type="any";
 	property name="orderService" type="any";
@@ -366,7 +365,7 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 	}
     
     public any function updateSubscriptionUsagesBenefits( required subscriptionUsagesList , required subscriptionBenefit){
-    	return getSubscriptionDAO().updateSubscriptionUsagesBenefits();
+    	return getSubscriptionDAO().updateSubscriptionUsagesBenefits(subscriptionUsagesList, subscriptionBenefit);
     }
 	// ===================== START: DAO Passthrough ===========================
 
