@@ -110,7 +110,8 @@ component displayname="Address" entityname="SlatwallAddress" table="SwAddress" p
 		return true;
 	}
 	
-	public any function copyAddress( saveNewAddress=false ) {
+	/** defaults to true because in most cases, this needs to be true. */
+	public any function copyAddress( saveNewAddress=true ) {
 		return getService("addressService").copyAddress( this, arguments.saveNewAddress );
 	}
 	

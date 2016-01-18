@@ -451,9 +451,10 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
  			}
 
  			// If there was originally a shippingAddress copy it over a duplicate
-			if(!originalOrderFulfillment.getShippingAddress().getNewFlag()) {
-				order.getOrderFulfillments()[1].setShippingAddress( originalOrderFulfillment.getShippingAddress().copyAddress() );
-			}
+			if(!isNull(originalOrderFulfillment.getShippingAddress()) && !originalOrderFulfillment.getShippingAddress().getNewFlag()) {
+				//this.saveAddress(originalOrderFulfillment.getShippingAddress());
+                order.getOrderFulfillments()[1].setShippingAddress( originalOrderFulfillment.getShippingAddress().copyAddress(true) );  
+            }
 
 			// If there was originally an email address copy it over
 			if(!isNull(originalOrderFulfillment.getEmailAddress())) {

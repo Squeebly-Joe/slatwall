@@ -159,7 +159,7 @@ component entityname="SlatwallSubscriptionUsage" table="SwSubsUsage" persistent=
 			setShippingAccountAddress( orderFulfillment.getAccountAddress() );
 			setShippingMethod( orderFulfillment.getShippingMethod() );
 			if(!orderFulfillment.getShippingAddress().getNewFlag()) {
-				setShippingAddress( orderFulfillment.getShippingAddress().copyAddress() );
+				setShippingAddress( orderFulfillment.getShippingAddress().copyAddress(true) );
 			}
 		}
 	}
