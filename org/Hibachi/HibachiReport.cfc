@@ -54,6 +54,7 @@
 	</cffunction>
 
 	<cffunction name="getShowReport" access="public" output="false">
+		
 		<cfif not structKeyExists(variables, "showReport")>
 			<cfset variables.showReport = false />
 		</cfif>
@@ -188,6 +189,7 @@
 	<!--- ================= START: TITLE HELPER METHODS ====================== --->
 
 	<cffunction name="getReportTitle" access="public" output="false">
+	
 		<cfif not isNull(getReportEntity())>
 			<cfreturn getReportEntity().getReportTitle() & " - " & rbKey('report.#getClassName()#') />
 		</cfif>
@@ -570,6 +572,7 @@
 	</cffunction>
 
 	<cffunction name="getChartData" access="public" output="false">
+	
 		<cfif NOT structKeyExists(variables, "chartData") AND getReportType() NEQ "none">
 
 			<cfset var chartDataStruct = structNew() />
@@ -683,7 +686,7 @@
 						<cfset variables.chartData["series"][dataSeriesID]["xAxis"] = 1 />
 						<cfset variables.chartData["series"][dataSeriesID]["color"] = getMetricColorDetails()[m]['compareColor'] />
 
-						<cf_HibachiDateLoop index="thisDate" from="#getReportCompareStartDateTime()#" to="#chartReportEndDateTime#" datepart="#loopdatepart#">
+						<hb:HibachiDateLoop index="thisDate" from="#getReportCompareStartDateTime()#" to="#chartReportEndDateTime#" datepart="#loopdatepart#">
 							<cfset var thisData = [] />
 							<cfset arrayAppend(thisData, dateDiff("s", createdatetime( '1970','01','01','00','00','00' ), dateAdd("h", 1, thisDate))*1000) />
 							<cfif addChartSeriesDataCheck(thisDate, getReportDateTimeGroupBy(), chartDataQuery, chartRow)>
@@ -693,7 +696,7 @@
 								<cfset arrayAppend(thisData, 0) />
 							</cfif>
 							<cfset structAppend(variables.chartData["series"][dataSeriesID]["data"], thisData) />
-						</cf_HibachiDateLoop>
+						</hb:HibachiDateLoop>
 					</cfif>
 				</cfloop>
 
