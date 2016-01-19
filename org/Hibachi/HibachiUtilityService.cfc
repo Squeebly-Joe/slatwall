@@ -6,16 +6,16 @@
 
 		//antisamy setup
 		variables.antisamyConfig = {
-			policyFile = ExpandPath("org/Hibachi/antisamy/antisamy-slashdot-1.4.1.xml"),
+			policyFile = expandPath("/#getApplicationValue('applicationKey')#")& "/org/Hibachi/antisamy/antisamy-slashdot-1.4.1.xml",
 			jarArray = [
-				ExpandPath("/Slatwall/org/Hibachi/antisamy/lib/antisamy-bin.1.4.1.jar"),
-				ExpandPath("/Slatwall/org/Hibachi/antisamy/lib/antisamy-required-libs/batik-css.jar"),
-				ExpandPath("/Slatwall/org/Hibachi/antisamy/lib/antisamy-required-libs/batik-util.jar"),
-				ExpandPath("/Slatwall/org/Hibachi/antisamy/lib/antisamy-required-libs/nekohtml.jar"),
-				ExpandPath("/Slatwall/org/Hibachi/antisamy/lib/antisamy-required-libs/xercesImpl.jar")
+				expandPath("/#getApplicationValue('applicationKey')#")&"/org/Hibachi/antisamy/lib/antisamy-bin.1.4.1.jar",
+				expandPath("/#getApplicationValue('applicationKey')#")&"/org/Hibachi/antisamy/lib/antisamy-required-libs/batik-css.jar",
+				expandPath("/#getApplicationValue('applicationKey')#")&"/org/Hibachi/antisamy/lib/antisamy-required-libs/batik-util.jar",
+				expandPath("/#getApplicationValue('applicationKey')#")&"/org/Hibachi/antisamy/lib/antisamy-required-libs/nekohtml.jar",
+				expandPath("/#getApplicationValue('applicationKey')#")&"/org/Hibachi/antisamy/lib/antisamy-required-libs/xercesImpl.jar"
 			]
 		};
-		variables.antisamyConfig.classLoader = CreateObject("component", "Slatwall.org.Hibachi.antisamy.lib.javaloader.JavaLoader").init(variables.antisamyConfig.jarArray);
+		variables.antisamyConfig.classLoader = CreateObject("component", "#getApplicationValue('applicationKey')#.org.Hibachi.antisamy.lib.javaloader.JavaLoader").init(variables.antisamyConfig.jarArray);
 		variables.antiSamy = variables.antisamyConfig.classLoader.create("org.owasp.validator.html.AntiSamy").init();
 
 		/**
