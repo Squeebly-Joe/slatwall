@@ -444,32 +444,7 @@ component extends="HibachiService"  accessors="true" output="false"
         /** add a shipping address */
         var shippingAddress = {};
         if (!isNull(data)){
-            if (!utility.hasPropertyWithDefinedValue(data, "locality")){
-                //Check if the required data is available and if we can give suggestion if postal code exists
-                if (!utility.hasPropertiesWithDefinedValues(data, "stateCode,countryCode,city") && utility.hasPropertyWithDefinedValue(data, "postalCode")){
-                    //add address suggestions based on postal code if available.
-               
-                    //get suggestions for address.
-                    var suggestions = getAddressService().getStateAndCountryCodesByPostalCode(data.postalCode);
-                    
-                    if (!isNull(suggestions) && isStruct(suggestions)){
-                        if (utility.hasPropertyWithDefinedValue(suggestions, "city") && isNull(data.city)){
-                            arguments.data['ajaxResponse']['errors']['city'] = ["did you mean <i>#suggestions['city']#?</i>"];
-                        }
-                        if (utility.hasPropertyWithDefinedValue(suggestions, "state") && isNull(data.stateCode)){
-                            arguments.data['ajaxResponse']['errors']['stateCode'] = ["did you mean <i>#suggestions['state']#?</i>"];
-                        }
-                        if (utility.hasPropertyWithDefinedValue(suggestions, "country") && isNull(data.countryCode)){
-                            arguments.data['ajaxResponse']['errors']['country'] = ["did you mean <i>#suggestions['country']#?</i>"];
-                        }
-                        if (structKeyExists(suggestions, "data") && isStruct(suggestions.data)){
-                            arguments.data['ajaxResponse']['messages']['suggestions'] = [suggestions.data];
-                        }
-                        arguments.data.$.slatwall.addActionResult( "public:cart.AddShippingAddress", true);
-                        return;
-                    }
-                }
-            } 
+             
             //if we have that data and don't have any suggestions to make, than try to populate the address
             shippingAddress = getService('AddressService').newAddress();    
             

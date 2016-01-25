@@ -121,6 +121,7 @@ component extends="HibachiService" accessors="true" output="false" {
 		return smartList.getRecords();
 	}
 	
+	
 	// =====================  END: Logical Methods ============================
 	
 	// ===================== START: DAO Passthrough ===========================
