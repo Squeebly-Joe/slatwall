@@ -1,36 +1,36 @@
 
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWWorkflowTrigger{
 	public static Factory(){
 		var directive = (
 			$log,
-			$slatwall,
+			$hibachi,
 			metadataService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWWorkflowTrigger(
 			$log,
-			$slatwall,
+			$hibachi,
 			metadataService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'metadataService',
 			'workflowPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
-		$slatwall,
+		$hibachi,
 		metadataService,
 		workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 	){
 		return {
 			restrict: 'A',
@@ -39,7 +39,7 @@ class SWWorkflowTrigger{
 				workflowTrigger:"=",
 				workflowTriggers:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(workflowPartialsPath)+"workflowtrigger.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(workflowPartialsPath)+"workflowtrigger.html",
 			link: function(scope, element,attrs){
 				$log.debug('workflow trigger init');
 
@@ -53,7 +53,7 @@ class SWWorkflowTrigger{
 					scope.finished = false;
 					scope.workflowTriggers.selectedTrigger = undefined;
 
-					var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(scope.workflowTrigger.data.workflow.data.workflowObject);
+					var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(scope.workflowTrigger.data.workflow.data.workflowObject);
 					filterPropertiesPromise.then(function(value){
 						scope.filterPropertiesList = {
 							baseEntityName:		scope.workflowTrigger.data.workflow.data.workflowObject,
@@ -79,7 +79,7 @@ class SWWorkflowTrigger{
 				 * Hard deletes a workflow trigger
 				 */
 				scope.deleteTrigger = function(workflowTrigger){
-					var deleteTriggerPromise = $slatwall.saveEntity('WorkflowTrigger',workflowTrigger.data.workflowTriggerID,{},'Delete');
+					var deleteTriggerPromise = $hibachi.saveEntity('WorkflowTrigger',workflowTrigger.data.workflowTriggerID,{},'Delete');
 					deleteTriggerPromise.then(function(value){
 						$log.debug('deleteTrigger');
 						scope.workflowTriggers.splice(workflowTrigger.$$index,1);

@@ -1,47 +1,47 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 class SWCriteriaString{
 	public static Factory(){
 		var directive = (
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWCriteriaString(
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'$filter',
 			'collectionPartialsPath',
 			'collectionService',
 			'metadataService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
-		$slatwall,
+		$hibachi,
 		$filter,
 		collectionPartialsPath,
 		collectionService,
 		metadataService,
-		pathBuilderConfig
+		hibachiPathBuilder
 	){
 		return {
 			restrict: 'E',
-			templateUrl:pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+'criteriastring.html',
+			templateUrl:hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+'criteriastring.html',
 			link: function(scope, element, attrs){
 				var getStringOptions = function(type){
 					if(angular.isUndefined(type)){

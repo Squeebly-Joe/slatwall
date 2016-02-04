@@ -99,6 +99,7 @@ component entityname="SlatwallOrderItem" table="SwOrderItem" persistent="true" a
 	property name="quantityReceived" persistent="false";
 	property name="quantityUnreceived" persistent="false";
 	property name="registrants" persistent="false";
+	property name="renewalSku" persistent="false";
 	property name="taxAmount" persistent="false" hb_formatType="currency";
 	property name="taxLiabilityAmount" persistent="false" hb_formatType="currency";
 	property name="itemTotal" persistent="false" hb_formatType="currency";
@@ -149,12 +150,12 @@ component entityname="SlatwallOrderItem" table="SwOrderItem" persistent="true" a
 			maxQTY = getSku().setting('skuOrderMaximumQuantity');
 
 			if(getSku().setting('skuTrackInventoryFlag') && !getSku().setting('skuAllowBackorderFlag')) {
-				if( !isNull(getStock()) && getStock().getQuantity('QATS') < maxQTY ) {
+				if( !isNull(getStock()) && getStock().getQuantity('QATS') <= maxQTY ) {
 					maxQTY = getStock().getQuantity('QATS');
 					if(!isNull(getOrder()) && getOrder().getOrderStatusType().getSystemCode() neq 'ostNotPlaced') {
 						maxQTY += getService('orderService').getOrderItemDBQuantity( orderItemID=this.getOrderItemID() );
 					}
-				} else if(getSKU().getQuantity('QATS') < maxQTY) {
+				} else if(getSKU().getQuantity('QATS') <= maxQTY) {
 					maxQTY = getSku().getQuantity('QATS');
 					if(!isNull(getOrder()) && getOrder().getOrderStatusType().getSystemCode() neq 'ostNotPlaced') {
 						maxQTY += getService('orderService').getOrderItemDBQuantity( orderItemID=this.getOrderItemID() );
@@ -170,24 +171,24 @@ component entityname="SlatwallOrderItem" table="SwOrderItem" persistent="true" a
     public any function getQuantityAlreadyOnOrder(){
         var qtyAlreadyOnOrder = 0;
         for (var orderItem in getOrder().getOrderItems()){
-            if (orderItem.getOrderItemID() != "" && !isNull(orderItem.getSku()) && orderItem.getSku().getSkuID() == getSku().getSkuID()) {    
+            if (orderItem.getOrderItemID() != "" && !isNull(orderItem.getSku()) && orderItem.getSku().getSkuID() == getSku().getSkuID()) {
                 qtyAlreadyOnOrder += orderItem.getQuantity();
             }
         }
         return qtyAlreadyOnOrder;
     }
-    
-    public any function getQuantityPlusQuantityAlreadyOnOrder(){ 
+
+    public any function getQuantityPlusQuantityAlreadyOnOrder(){
         return getQuantity() + getQuantityAlreadyOnOrder();
     }
-    
+
     public boolean function hasQuantityWithinMaxOrderQuantity() {
         if(getOrderItemType().getSystemCode() == 'oitSale') {
-            return getQuantityPlusQuantityAlreadyOnOrder() <= getMaximumOrderQuantity();    
+            return getQuantityPlusQuantityAlreadyOnOrder() <= getMaximumOrderQuantity();
         }
         return true;
     }
-    
+
     public boolean function hasQuantityWithinMinOrderQuantity() {
         if(getOrderItemType().getSystemCode() == 'oitSale') {
             return getQuantityPlusQuantityAlreadyOnOrder() >= getSku().setting('skuOrderMinimumQuantity');
@@ -213,6 +214,12 @@ component entityname="SlatwallOrderItem" table="SwOrderItem" persistent="true" a
 
 	public string function getTypeCode(){
 		return getOrderItemType().getSystemCode();
+	}
+
+	public any function getRenewalSku(){
+		if(!isNull(this.getSku()) && !isNull(this.getSku().getRenewalSku())){
+			return this.getSku().getRenewalSku();
+		}
 	}
 
 	public string function displayCustomizations(format="list") {

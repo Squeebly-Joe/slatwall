@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 class SWDisplayItem{
 	public static Factory():ng.IDirectiveFactory{
@@ -7,35 +7,35 @@ class SWDisplayItem{
 			$compile,
 			$templateCache,
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWDisplayItem(
 			$http,
 			$compile,
 			$templateCache,
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$http',
 			'$compile',
 			'$templateCache',
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'$filter',
 			'collectionPartialsPath',
 			'collectionService',
 			'metadataService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive
 	}
@@ -46,12 +46,12 @@ class SWDisplayItem{
 		$compile,
 		$templateCache,
 		$log,
-		$slatwall,
+		$hibachi,
 		$filter,
 		collectionPartialsPath,
 		collectionService,
 		metadataService,
-		pathBuilderConfig
+		hibachiPathBuilder
 	){
 		return{
 			require:'^swDisplayOptions',
@@ -63,7 +63,7 @@ class SWDisplayItem{
 				selectedPropertyChanged:"&"
 
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"displayitem.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"displayitem.html",
 			link: function(scope, element,attrs,displayOptionsController){
 				scope.showDisplayItem = false;
 
@@ -92,7 +92,7 @@ class SWDisplayItem{
 
 						if(selectedProperty.$$group === 'drilldown'){
 							if(angular.isUndefined(scope.propertiesList[selectedProperty.propertyIdentifier])){
-								var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(selectedProperty.cfc);
+								var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(selectedProperty.cfc);
 								filterPropertiesPromise.then(function(value){
 									metadataService.setPropertiesList(value,selectedProperty.propertyIdentifier);
 									scope.propertiesList[selectedProperty.propertyIdentifier] = metadataService.getPropertiesListByBaseEntityAlias(selectedProperty.propertyIdentifier);

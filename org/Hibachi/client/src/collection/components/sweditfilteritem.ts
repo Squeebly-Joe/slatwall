@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 class SWEditFilterItem{
 	public static Factory(){
@@ -9,11 +9,12 @@ class SWEditFilterItem{
 			$log,
 			$filter,
             $timeout,
-			$slatwall,
+			$hibachi,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder,
+            rbkeyService
 		)=> new SWEditFilterItem(
 			$http,
 			$compile,
@@ -21,11 +22,12 @@ class SWEditFilterItem{
 			$log,
 			$filter,
             $timeout,
-			$slatwall,
+			$hibachi,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder,
+            rbkeyService
 		);
 		directive.$inject = [
 			'$http',
@@ -34,11 +36,12 @@ class SWEditFilterItem{
 			'$log',
 			'$filter',
             '$timeout',
-			'$slatwall',
+			'$hibachi',
 			'collectionPartialsPath',
 			'collectionService',
 			'metadataService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder',
+            'rbkeyService'
 		];
 		return directive;
 	}
@@ -49,11 +52,12 @@ class SWEditFilterItem{
 		$log,
 		$filter,
         $timeout,
-		$slatwall,
+		$hibachi,
 		collectionPartialsPath,
 		collectionService,
 		metadataService,
-		pathBuilderConfig
+		hibachiPathBuilder,
+        rbkeyService
 	){
 		return {
 			require:'^swFilterGroups',
@@ -67,7 +71,7 @@ class SWEditFilterItem{
 				filterItemIndex:"=",
 				comparisonType:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"editfilteritem.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"editfilteritem.html",
 			link: function(scope, element,attrs,filterGroupsController){
                 function daysBetween(first, second) {
     
@@ -90,7 +94,7 @@ class SWEditFilterItem{
                         
                         scope.filterItem.breadCrumbs = [
                                                 {
-                                                    rbKey:$slatwall.getRBKey('entity.'+scope.collectionConfig.baseEntityAlias.replace('_','')),
+                                                    rbKey:rbkeyService.getRBKey('entity.'+scope.collectionConfig.baseEntityAlias.replace('_','')),
                                                     entityAlias:scope.collectionConfig.baseEntityAlias,
                                                     cfc:scope.collectionConfig.baseEntityAlias,
                                                     propertyIdentifier:scope.collectionConfig.baseEntityAlias
@@ -101,7 +105,7 @@ class SWEditFilterItem{
                         entityAliasArrayFromString.pop();
                         for(var i in entityAliasArrayFromString){
                             var breadCrumb = {
-                                    rbKey:$slatwall.getRBKey('entity.'+scope.collectionConfig.baseEntityAlias.replace('_','')),
+                                    rbKey:rbkeyService.getRBKey('entity.'+scope.collectionConfig.baseEntityAlias.replace('_','')),
                                     entityAlias:entityAliasArrayFromString[i],
                                     cfc:entityAliasArrayFromString[i],
                                     propertyIdentifier:entityAliasArrayFromString[i]
@@ -113,7 +117,7 @@ class SWEditFilterItem{
                    
                     angular.forEach(scope.filterItem.breadCrumbs,function(breadCrumb,key){
                         if(angular.isUndefined(scope.filterPropertiesList[breadCrumb.propertyIdentifier])){
-                            var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(breadCrumb.cfc);
+                            var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(breadCrumb.cfc);
                             filterPropertiesPromise.then(function(value){
                                 metadataService.setPropertiesList(value,breadCrumb.propertyIdentifier);
                                 scope.filterPropertiesList[breadCrumb.propertyIdentifier] = metadataService.getPropertiesListByBaseEntityAlias(breadCrumb.propertyIdentifier);
@@ -248,20 +252,11 @@ class SWEditFilterItem{
                                 //retrieving implied value or user input | ex. implied:prop is null, user input:prop = "Name"
                                 if(angular.isDefined(selectedFilterProperty.selectedCriteriaType.value)){
                                     filterItem.value = selectedFilterProperty.selectedCriteriaType.value;
-                                    filterItem.displayValue = filterItem.value;
-                                }else{
-                                    //if has a pattern then we need to evaluate where to add % for like statement
-                                    if(angular.isDefined(selectedFilterProperty.selectedCriteriaType.pattern)){
-                                        filterItem.pattern = selectedFilterProperty.selectedCriteriaType.pattern;
-                                        
-                                        filterItem.displayValue = filterItem.value;
-                                    }else{
-                                        filterItem.value = filterItem.value;
-                                        if(angular.isUndefined(filterItem.displayValue)){
-                                            filterItem.displayValue = filterItem.value;
-                                        }
-                                    }
+                                //if has a pattern then we need to evaluate where to add % for like statement
+							    }else if(angular.isDefined(selectedFilterProperty.selectedCriteriaType.pattern)){
+                                    filterItem.pattern = selectedFilterProperty.selectedCriteriaType.pattern;
                                 }
+                                filterItem.displayValue = filterItem.value;
                                 
                                 break;
                                 //TODO:simplify timestamp and big decimal to leverage reusable function for null, range, and value

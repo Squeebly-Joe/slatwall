@@ -1,38 +1,39 @@
-
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWDetailTabs{
 	public static Factory(){
 		var directive = (
 			$location,
 			$log,
-			$slatwall,
+			$hibachi,
 			coreEntityPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWDetailTabs(
 			$location,
 			$log,
-			$slatwall,
+			$hibachi,
 			coreEntityPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$location',
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'coreEntityPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$location,
 		$log,
-		$slatwall,
+		$hibachi,
 		coreEntityPartialsPath,
-		pathBuilderConfig
+		hibachiPathBuilder
 	){
 		return {
 	        restrict: 'E',
-	        templateUrl:pathBuilderConfig.buildPartialsPath(coreEntityPartialsPath)+'detailtabs.html',
+	        templateUrl:hibachiPathBuilder.buildPartialsPath(coreEntityPartialsPath)+'detailtabs.html',
 	        link: function (scope, element, attr) {
 
 	        }

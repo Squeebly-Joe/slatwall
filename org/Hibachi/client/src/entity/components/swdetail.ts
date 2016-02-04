@@ -1,37 +1,39 @@
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWDetail{
 	public static Factory(){
 		var directive = (
 			$location,
 			$log,
-			$slatwall,
+			$hibachi,
 			coreEntityPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWDetail(
 			$location,
 			$log,
-			$slatwall,
+			$hibachi,
 			coreEntityPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$location',
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'coreEntityPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$location,
 		$log,
-		$slatwall,
+		$hibachi,
 		coreEntityPartialsPath,
-		pathBuilderConfig
+		hibachiPathBuilder
 	){
 		return {
 	        restrict: 'E',
-	        templateUrl:pathBuilderConfig.buildPartialsPath(coreEntityPartialsPath)+'/detail.html',
+	        templateUrl:hibachiPathBuilder.buildPartialsPath(coreEntityPartialsPath)+'/detail.html',
 	        link: function (scope, element, attr) {
 	        	scope.$id="slatwallDetailController";
 	        	$log.debug('slatwallDetailController');
@@ -55,15 +57,15 @@ class SWDetail{
 
 	        	var propertyCasedEntityName = scope.entityName.charAt(0).toUpperCase() + scope.entityName.slice(1);
 
-	        	scope.tabPartialPath = pathBuilderConfig.buildPartialsPath(coreEntityPartialsPath);
+	        	scope.tabPartialPath = hibachiPathBuilder.buildPartialsPath(coreEntityPartialsPath);
 
 	        	scope.getEntity = function(){
 
 	        		if(scope.entityID === 'null'){
-	        			scope.entity = $slatwall['new'+propertyCasedEntityName]();
+	        			scope.entity = $hibachi['new'+propertyCasedEntityName]();
 	        			setupMetaData();
 	        		}else{
-	        			var entityPromise = $slatwall['get'+propertyCasedEntityName]({id:scope.entityID});
+	        			var entityPromise = $hibachi['get'+propertyCasedEntityName]({id:scope.entityID});
 	        			entityPromise.promise.then(function(){
 	        				scope.entity = entityPromise.value;
 	        				setupMetaData();

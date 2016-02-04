@@ -1,55 +1,59 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 class SWCriteriaManyToMany{
     public static Factory(){
         var directive = (
             $log,
-            $slatwall,
+            $hibachi,
             $filter,
             collectionPartialsPath,
             collectionService,
             metadataService,
             dialogService,
             observerService,
-			pathBuilderConfig
+			hibachiPathBuilder,
+            rbkeyService
         )=> new SWCriteriaManyToMany(
             $log,
-            $slatwall,
+            $hibachi,
             $filter,
             collectionPartialsPath,
             collectionService,
             metadataService,
             dialogService,
             observerService,
-			pathBuilderConfig
+			hibachiPathBuilder,
+            rbkeyService
         );
         directive.$inject = [
             '$log',
-            '$slatwall',
+            '$hibachi',
             '$filter',
             'collectionPartialsPath',
             'collectionService',
             'metadataService',
             'dialogService',
             'observerService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder',
+            'rbkeyService',
         ];
         return directive;
     }
     constructor(
         $log,
-        $slatwall,
+        $hibachi,
         $filter,
         collectionPartialsPath,
         collectionService,
         metadataService,
         dialogService,
         observerService,
-        pathBuilderConfig
+        hibachiPathBuilder,
+        rbkeyService
     ){
         return {
             restrict: 'E',
-            templateUrl:pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+'criteriamanytomany.html',
+            templateUrl:hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+'criteriamanytomany.html',
             link: function(scope, element, attrs){
                 scope.data ={};
                 scope.collectionOptionsOpen = false;
@@ -109,7 +113,7 @@ class SWCriteriaManyToMany{
                 };
 
                 scope.manyToManyOptions = getManyToManyOptions(scope.comparisonType);
-                var existingCollectionsPromise = $slatwall.getExistingCollectionsByBaseEntity(scope.selectedFilterProperty.cfc);
+                var existingCollectionsPromise = $hibachi.getExistingCollectionsByBaseEntity(scope.selectedFilterProperty.cfc);
                 existingCollectionsPromise.then(function(value){
                     scope.collectionOptions = value.data;
                     if(angular.isDefined(scope.filterItem.collectionID)){
@@ -142,7 +146,7 @@ class SWCriteriaManyToMany{
                         entityAlias:scope.selectedFilterProperty.name,
                         cfc:scope.selectedFilterProperty.cfc,
                         propertyIdentifier:scope.selectedFilterProperty.propertyIdentifier,
-                        rbKey:$slatwall.getRBKey('entity.'+scope.selectedFilterProperty.cfc.replace('_',''))
+                        rbKey:rbkeyService.getRBKey('entity.'+scope.selectedFilterProperty.cfc.replace('_',''))
                     };
                     scope.filterItem.breadCrumbs.push(breadCrumb);
 

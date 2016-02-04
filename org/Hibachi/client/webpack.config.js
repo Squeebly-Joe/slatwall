@@ -1,5 +1,4 @@
 var webpack = require('webpack');  
-//var angular = require('angular');
 var path = require('path');
 var PATHS = {
     app:__dirname + '/src'
@@ -23,6 +22,7 @@ module.exports = {
      alias:{
     	'date':'../lib/date/date.min.js'
   		,'angular':'../lib/angular/angular.min.js'
+  		,'angular-lazy-bootstrap':'../lib/angular-lazy-bootstrap/bootstrap.js'
   		,'ui.bootstrap':'../lib/angular-ui-bootstrap/ui.bootstrap.min.js'
   		,'angular-resource':'../../lib/angular/angular-resource.min.js'
   		,'angular-cookies':'../../lib/angular/angular-cookies.min.js'
@@ -30,7 +30,6 @@ module.exports = {
         ,'angular-animate':'../lib/angular/angular-animate.min.js'
         ,'angular-sanitize':'../lib/angular/angular-sanitize.min.js'
         ,'metismenu':'../lib/metismenu/metismenu.js'
-      
       //,'ng-ckeditor':'../lib/ng-ckeditor/ng-ckeditor.min.js'
   	}
   },

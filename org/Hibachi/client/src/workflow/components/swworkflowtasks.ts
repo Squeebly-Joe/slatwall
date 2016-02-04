@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 /**
  * Handles adding, editing, and deleting Workflows Tasks.
  */
@@ -8,48 +8,48 @@ class SWWorkflowTasks{
 		var directive = (
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			metadataService,
 			collectionService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=>new SWWorkflowTasks(
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			metadataService,
 			collectionService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
 			'$location',
-			'$slatwall',
+			'$hibachi',
 			'metadataService',
 			'collectionService',
 			'workflowPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
 		$location,
-		$slatwall,
+		$hibachi,
 		metadataService,
 		collectionService,
 		workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 	){
 		return {
 			restrict: 'A',
 			scope:{
 				workflow:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(workflowPartialsPath)+"workflowtasks.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(workflowPartialsPath)+"workflowtasks.html",
 			link: function(scope, element,attrs){
-				scope.workflowPartialsPath = pathBuilderConfig.buildPartialsPath(workflowPartialsPath);
+				scope.workflowPartialsPath = hibachiPathBuilder.buildPartialsPath(workflowPartialsPath);
 				scope.propertiesList = {};
 
 				function logger(context, message){
@@ -159,7 +159,7 @@ class SWWorkflowTasks{
 					scope.finished = false;
 					scope.workflowTasks.selectedTask = undefined;
 
-					var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(scope.workflow.data.workflowObject);
+					var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(scope.workflow.data.workflowObject);
 					filterPropertiesPromise.then(function(value){
 						scope.filterPropertiesList = {
 							baseEntityName:scope.workflow.data.workflowObject,

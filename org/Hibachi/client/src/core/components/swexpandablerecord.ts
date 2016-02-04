@@ -1,8 +1,8 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 
 class SWExpandableRecordController{
-    public static $inject = ['$timeout','utilityService','$slatwall','collectionConfigService'];
+    public static $inject = ['$timeout','utilityService','$hibachi','collectionConfigService'];
     public childrenLoaded = false;
     public childrenOpen = false;
     public children = [];
@@ -15,9 +15,10 @@ class SWExpandableRecordController{
     public collectionConfig:any;
     public parentId:string;
     public entity:any
-    constructor(private $timeout:ng.ITimeoutService, private utilityService, private $slatwall, private collectionConfigService){
+    //@ngInject
+    constructor(private $timeout:ng.ITimeoutService, private utilityService, private $hibachi, private collectionConfigService){
         this.$timeout = $timeout;
-        this.$slatwall = $slatwall;
+        this.$hibachi = $hibachi;
         this.utilityService = utilityService;
         this.collectionConfigService = collectionConfigService;
     }
@@ -29,11 +30,11 @@ class SWExpandableRecordController{
                     //set up parent
                     var parentName = this.entity.metaData.hb_parentPropertyName;
                     var parentCFC = this.entity.metaData[parentName].cfc;
-                    var parentIDName = this.$slatwall.getEntityExample(parentCFC).$$getIDName();
+                    var parentIDName = this.$hibachi.getEntityExample(parentCFC).$$getIDName();
                     //set up child
                     var childName = this.entity.metaData.hb_childPropertyName;
                     var childCFC = this.entity.metaData[childName].cfc
-                    var childIDName = this.$slatwall.getEntityExample(childCFC).$$getIDName();
+                    var childIDName = this.$hibachi.getEntityExample(childCFC).$$getIDName();
 
                     childCollectionConfig.clearFilterGroups();
                     childCollectionConfig.collection = this.entity;
@@ -97,14 +98,14 @@ class SWExpandableRecord implements ng.IDirective{
             $timeout:ng.ITimeoutService,
             corePartialsPath,
             utilityService,
-			pathBuilderConfig
+			hibachiPathBuilder
         ) => new SWExpandableRecord(
             $compile,
             $templateRequest,
             $timeout,
             corePartialsPath,
             utilityService,
-			pathBuilderConfig
+			hibachiPathBuilder
         );
         directive.$inject = [
             '$compile',
@@ -112,7 +113,7 @@ class SWExpandableRecord implements ng.IDirective{
             '$timeout',
             'corePartialsPath',
             'utilityService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
         ];
         return directive;
     }
@@ -120,21 +121,21 @@ class SWExpandableRecord implements ng.IDirective{
     public controller=SWExpandableRecordController;
     public controllerAs="swExpandableRecord";
     public static $inject = ['$compile','$templateRequest','$timeout','corePartialsPath','utilityService',
-			'pathBuilderConfig'];
+			'hibachiPathBuilder'];
     constructor(
         public $compile:ng.ICompileService,
         public $templateRequest:ng.ITemplateRequestService,
         public $timeout:ng.ITimeoutService,
         public corePartialsPath,
         public utilityService,
-		public pathBuilderConfig
+		public hibachiPathBuilder
      ){
         this.$compile = $compile;
         this.$templateRequest = $templateRequest;
         this.corePartialsPath = corePartialsPath;
         this.$timeout = $timeout;
         this.utilityService = utilityService;
-        this.pathBuilderConfig = pathBuilderConfig;
+        this.hibachiPathBuilder = hibachiPathBuilder;
     }
 
     public link:ng.IDirectiveLinkFn = (scope:any, element:any, attrs:any) =>{
@@ -153,7 +154,7 @@ class SWExpandableRecord implements ng.IDirective{
                 }
             }
 
-            this.$templateRequest(this.pathBuilderConfig.buildPartialsPath(this.corePartialsPath)+"expandablerecord.html").then((html)=>{
+            this.$templateRequest(this.hibachiPathBuilder.buildPartialsPath(this.corePartialsPath)+"expandablerecord.html").then((html)=>{
                 var template = angular.element(html);
 
                 //get autoopen reference to ensure only the root is autoopenable

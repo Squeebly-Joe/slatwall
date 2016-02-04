@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 declare var Date:any;
 class SWConditionCriteria{
@@ -8,38 +8,38 @@ class SWConditionCriteria{
 			$compile,
 			$templateCache,
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			workflowPartialsPath,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=>new SWConditionCriteria(
 			$http,
 			$compile,
 			$templateCache,
 			$log,
-			$slatwall,
+			$hibachi,
 			$filter,
 			workflowPartialsPath,
 			collectionPartialsPath,
 			collectionService,
 			metadataService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$http',
 			'$compile',
 			'$templateCache',
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'$filter',
 			'workflowPartialsPath',
 			'collectionPartialsPath',
 			'collectionService',
 			'metadataService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
@@ -48,13 +48,13 @@ class SWConditionCriteria{
 		$compile,
 		$templateCache,
 		$log,
-		$slatwall,
+		$hibachi,
 		$filter,
 		workflowPartialsPath,
 		collectionPartialsPath,
 		collectionService,
 		metadataService,
-		pathBuilderConfig
+		hibachiPathBuilder
 	){
 		/* Template info begin*/
 		var getTemplate = function(selectedFilterProperty){
@@ -62,25 +62,25 @@ class SWConditionCriteria{
 			var templatePath = '';
 
 			if(angular.isUndefined(selectedFilterProperty.ormtype) && angular.isUndefined(selectedFilterProperty.fieldtype)){
-				templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteria.html";
+				templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteria.html";
 			}else{
 				var criteriaormtype = selectedFilterProperty.ormtype;
 				var criteriafieldtype = selectedFilterProperty.fieldtype;
 				/*TODO: convert all switches to object literals*/
 				switch(criteriaormtype){
 					case 'boolean':
-					templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriaboolean.html";
+					templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriaboolean.html";
 						break;
 					case 'string':
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriastring.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriastring.html";
 						break;
 					case 'timestamp':
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriadate.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriadate.html";
 						break;
 					case 'big_decimal':
 					case 'integer':
 					case 'float':
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criterianumber.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criterianumber.html";
 						break;
 
 
@@ -88,13 +88,13 @@ class SWConditionCriteria{
 
 				switch(criteriafieldtype){
 					case "many-to-one":
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriamanytoone.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriamanytoone.html";
 						break;
 					case "many-to-many":
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriamanytomany.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriamanytomany.html";
 						break;
 					case "one-to-many":
-						templatePath = pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"criteriaonetomany.html";
+						templatePath = hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"criteriaonetomany.html";
 						break;
 				}
 			}
@@ -875,7 +875,7 @@ class SWConditionCriteria{
 								$log.debug(scope.filterPropertiesList);
 
 								if(angular.isUndefined(scope.filterPropertiesList[scope.selectedFilterProperty.propertyIdentifier])){
-									var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(scope.selectedFilterProperty.cfc);
+									var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(scope.selectedFilterProperty.cfc);
 									filterPropertiesPromise.then(function(value){
 										scope.filterPropertiesList[scope.selectedFilterProperty.propertyIdentifier] = value;
 										metadataService.formatPropertiesList(scope.filterPropertiesList[scope.selectedFilterProperty.propertyIdentifier],scope.selectedFilterProperty.propertyIdentifier);
@@ -889,7 +889,7 @@ class SWConditionCriteria{
 							case "one-to-many":
 								scope.manyToManyOptions = getManyToManyOptions();
 								scope.oneToManyOptions = getOneToManyOptions();
-								var existingCollectionsPromise = $slatwall.getExistingCollectionsByBaseEntity(selectedFilterProperty.cfc);
+								var existingCollectionsPromise = $hibachi.getExistingCollectionsByBaseEntity(selectedFilterProperty.cfc);
 								existingCollectionsPromise.then(function(value){
 									scope.collectionOptions = value.data;
 									if(angular.isDefined(scope.workflowCondition.collectionID)){

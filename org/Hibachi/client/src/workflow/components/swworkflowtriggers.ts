@@ -1,47 +1,47 @@
 
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWWorkflowTriggers{
 	public static Factory(){
 		var directive = (
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			workflowPartialsPath,
 			formService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWWorkflowTriggers(
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			workflowPartialsPath,
 			formService,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
 			'$location',
-			'$slatwall',
+			'$hibachi',
 			'workflowPartialsPath',
 			'formService',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
 		$location,
-		$slatwall,
+		$hibachi,
 		workflowPartialsPath,
 		formService,
-			pathBuilderConfig
+			hibachiPathBuilder
 	){
 		return {
 			restrict: 'E',
 			scope:{
 				workflow:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(workflowPartialsPath)+"workflowtriggers.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(workflowPartialsPath)+"workflowtriggers.html",
 			link: function(scope, element,attrs,formController){
 				$log.debug('Workflow triggers init');
 				scope.$id = 'swWorkflowTriggers';
@@ -100,7 +100,7 @@ class SWWorkflowTriggers{
 					         ']'+
 						'}'+
 					']';
-					var collectionsPromise = $slatwall.getEntity('Collection',{filterGroupsConfig:filterGroupsConfig});
+					var collectionsPromise = $hibachi.getEntity('Collection',{filterGroupsConfig:filterGroupsConfig});
 
 					collectionsPromise.then(function(value){
 						$log.debug('getcollections');
@@ -128,7 +128,7 @@ class SWWorkflowTriggers{
 				 */
 				scope.getEventOptions = function(objectName){
 					if(!scope.eventOptions.length){
-						var eventOptionsPromise = $slatwall.getEventOptions(objectName);
+						var eventOptionsPromise = $hibachi.getEventOptions(objectName);
 
 						eventOptionsPromise.then(function(value){
 							$log.debug('getEventOptions');

@@ -1,35 +1,35 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWOptions{
     public static Factory(){
         var directive:ng.IDirectiveFactory = (
             $log,
-            $slatwall,
+            $hibachi,
             observerService,
             corePartialsPath,
-            pathBuilderConfig
+            hibachiPathBuilder
         )=> new SWOptions(
             $log,
-            $slatwall,
+            $hibachi,
             observerService,
             corePartialsPath,
-            pathBuilderConfig
+            hibachiPathBuilder
         );
         directive.$inject = [
             '$log',
-            '$slatwall',
+            '$hibachi',
             'observerService',
             'corePartialsPath',
-            'pathBuilderConfig'
+            'hibachiPathBuilder'
         ];
         return directive;
     }
     constructor(
         $log,
-        $slatwall,
+        $hibachi,
         observerService,
         corePartialsPath,
-        pathBuilderConfig
+        hibachiPathBuilder
     ){
 
         return {
@@ -37,13 +37,13 @@ class SWOptions{
 			scope:{
 				objectName:'@'
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(corePartialsPath)+"options.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(corePartialsPath)+"options.html",
 			link: function(scope, element,attrs){
                 scope.swOptions = {};
                 scope.swOptions.objectName=scope.objectName;
                 //sets up drop down options via collections
                 scope.getOptions = function(){
-                    scope.swOptions.object = $slatwall['new'+scope.swOptions.objectName]();
+                    scope.swOptions.object = $hibachi['new'+scope.swOptions.objectName]();
                     var columnsConfig = [
                         {
                             "propertyIdentifier":scope.swOptions.objectName.charAt(0).toLowerCase()+scope.swOptions.objectName.slice(1)+'Name'
@@ -52,7 +52,7 @@ class SWOptions{
                             "propertyIdentifier":scope.swOptions.object.$$getIDName()
                         }
                     ]
-                   $slatwall.getEntity(scope.swOptions.objectName,{allRecords:true, columnsConfig:angular.toJson(columnsConfig)})
+                   $hibachi.getEntity(scope.swOptions.objectName,{allRecords:true, columnsConfig:angular.toJson(columnsConfig)})
                    .then(function(value){
                         scope.swOptions.options = value.records;
                         observerService.notify('optionsLoaded');

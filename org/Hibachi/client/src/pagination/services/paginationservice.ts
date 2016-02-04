@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../../../typings/slatwallTypeScript.d.ts" />
+/// <reference path="../../../typings/hibachiTypescript.d.ts" />
 /*collection service is used to maintain the state of the ui*/
 
 
@@ -166,10 +166,10 @@ interface IPaginationService{
 }
 
 class PaginationService implements IPaginationService{
-    //@ngInject
+    
 
     private paginations = {};
-
+    //@ngInject
     constructor(
         private utilityService
     ){

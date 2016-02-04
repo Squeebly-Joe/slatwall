@@ -1,43 +1,43 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWWorkflowCondition{
 	public static Factory(){
 		var directive = (
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			formService,
 			metadataService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWWorkflowCondition(
 			$log,
 			$location,
-			$slatwall,
+			$hibachi,
 			formService,
 			metadataService,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
 			'$location',
-			'$slatwall',
+			'$hibachi',
 			'formService',
 			'metadataService',
 			'workflowPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
 		$location,
-		$slatwall,
+		$hibachi,
 		formService,
 		metadataService,
 		workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 	){
 		return {
 			restrict: 'E',
@@ -47,7 +47,7 @@ class SWWorkflowCondition{
 				workflow:"=",
 				filterPropertiesList:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(workflowPartialsPath)+"workflowcondition.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(workflowPartialsPath)+"workflowcondition.html",
 			link: function(scope, element,attrs){
 				$log.debug('workflowCondition init');
 				$log.debug(scope);
@@ -93,7 +93,7 @@ class SWWorkflowCondition{
 				}else{
 					angular.forEach(scope.workflowCondition.breadCrumbs,function(breadCrumb,key){
 						if(angular.isUndefined(scope.filterPropertiesList[breadCrumb.propertyIdentifier])){
-							var filterPropertiesPromise = $slatwall.getFilterPropertiesByBaseEntityName(breadCrumb.cfc);
+							var filterPropertiesPromise = $hibachi.getFilterPropertiesByBaseEntityName(breadCrumb.cfc);
 							filterPropertiesPromise.then(function(value){
 								metadataService.setPropertiesList(value,breadCrumb.propertyIdentifier);
 								scope.filterPropertiesList[breadCrumb.propertyIdentifier] = metadataService.getPropertiesListByBaseEntityAlias(breadCrumb.propertyIdentifier);

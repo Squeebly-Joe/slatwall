@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 
 
 class SWFormField{
@@ -8,27 +8,27 @@ class SWFormField{
 			$log,
 			$templateCache,
 			$window,
-			$slatwall,
+			$hibachi,
 			formService,
 			coreFormPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=>new SWFormField(
 			$log,
 			$templateCache,
 			$window,
-			$slatwall,
+			$hibachi,
 			formService,
 			coreFormPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
 			'$templateCache',
 			'$window',
-			'$slatwall',
+			'$hibachi',
 			'formService',
 			'coreFormPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
@@ -36,10 +36,10 @@ class SWFormField{
 		 $log,
 		 $templateCache,
 		 $window,
-		 $slatwall,
+		 $hibachi,
 		 formService,
 		 coreFormPartialsPath,
-		 pathBuilderConfig
+		 hibachiPathBuilder
 	){
 		return {
 			require:"^form",
@@ -47,7 +47,7 @@ class SWFormField{
 			scope:{
 				propertyDisplay:"="
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(coreFormPartialsPath)+'formfield.html',
+			templateUrl:hibachiPathBuilder.buildPartialsPath(coreFormPartialsPath)+'formfield.html',
 			link: (scope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes, formController: ng.IFormController) =>{
 				if(angular.isUndefined(scope.propertyDisplay.object.$$getID) || scope.propertyDisplay.object.$$getID() === ''){
 					scope.propertyDisplay.isDirty = true;
@@ -64,5 +64,5 @@ class SWFormField{
 export{
 	SWFormField
 }
-//	angular.module('slatwalladmin').directive('swFormField',['$log','$templateCache', '$window', '$slatwall', 'formService', 'coreFormPartialsPath',($log, $templateCache, $window, $slatwall, formService, coreFormPartialsPath) => new swFormField($log, $templateCache, $window, $slatwall, formService, coreFormPartialsPath)]);
+//	angular.module('slatwalladmin').directive('swFormField',['$log','$templateCache', '$window', '$hibachi', 'formService', 'coreFormPartialsPath',($log, $templateCache, $window, $hibachi, formService, coreFormPartialsPath) => new swFormField($log, $templateCache, $window, $hibachi, formService, coreFormPartialsPath)]);
 

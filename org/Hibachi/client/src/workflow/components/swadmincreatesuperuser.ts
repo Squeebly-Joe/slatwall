@@ -1,39 +1,39 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 class SWAdminCreateSuperUser{
 	public static Factory(){
 		var directive = (
 			$log,
-			$slatwall,
+			$hibachi,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		)=> new SWAdminCreateSuperUser(
 			$log,
-			$slatwall,
+			$hibachi,
 			workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 		);
 		directive.$inject = [
 			'$log',
-			'$slatwall',
+			'$hibachi',
 			'workflowPartialsPath',
-			'pathBuilderConfig'
+			'hibachiPathBuilder'
 		];
 		return directive;
 	}
 	constructor(
 		$log,
-		$slatwall,
+		$hibachi,
 		workflowPartialsPath,
-			pathBuilderConfig
+			hibachiPathBuilder
 	){
 		return {
 			restrict: 'E',
 			scope:{
 			},
-			templateUrl:pathBuilderConfig.buildPartialsPath(workflowPartialsPath)+"admincreatesuperuser.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(workflowPartialsPath)+"admincreatesuperuser.html",
 			link: function(scope, element,attrs){
-                scope.Account_SetupInitialAdmin = $slatwall.newAccount_SetupInitialAdmin();
+                scope.Account_SetupInitialAdmin = $hibachi.newAccount_SetupInitialAdmin();
 			}
 		};
 	}

@@ -1,32 +1,36 @@
 /// <reference path="../../typings/tsd.d.ts" />
-/// <reference path="../../typings/slatwallTypeScript.d.ts" />
+/// <reference path="../../typings/hibachiTypescript.d.ts" />
 //modules
-import {ngslatwallmodelmodule} 	from "../ngslatwallmodel/ngslatwallmodel.module";
+import {hibachimodule} 	from "../hibachi/hibachi.module";
 //controllers
 import {FrontendController} from './controllers/frontend';
 //directives
 import {SWFDirective} 		from "./components/swfdirective";
-import {SWFCart} 			from "./components/swfcart"; 
-import {SWFCreateAccount} 	from "./components/swfcreateaccount";
-import {SWFLogin} 			from "./components/swflogin";
-import {SWFLogout} 			from "./components/swflogout";
-import {SWFPromo} 			from "./components/swfpromo";
 
-declare var slatwallAngular:any;
+
 //need to inject the public service into the rootscope for use in the directives.
 //Also, we set the initial value for account and cart.
-var frontendmodule = angular.module('frontend', [ngslatwallmodelmodule.name])
-.config(['pathBuilderConfig',(pathBuilderConfig)=>{
-                    /** set the baseURL */
-					pathBuilderConfig.setBaseURL('/');	
-                    pathBuilderConfig.setBasePartialsPath('custom/assets/');
+
+var frontendmodule = angular.module('frontend', [hibachimodule.name])
+.config(['hibachiPathBuilder',(hibachiPathBuilder)=>{
+                    /** set the baseURL */ 
+					hibachiPathBuilder.setBaseURL('/');
+                    hibachiPathBuilder.setBasePartialsPath('custom/assets/');
+
 }])
-.run(['$rootScope', 'publicService','pathBuilderConfig', function($rootScope, publicService,pathBuilderConfig) {
-	
-	$rootScope.hibachiScope = publicService;
+
+.run(['$rootScope', '$hibachi','publicService','hibachiPathBuilder', function($rootScope, $hibachi, publicService,hibachiPathBuilder) {
+
+
+    $rootScope.hibachiScope = publicService;
 	$rootScope.hibachiScope.getAccount(); 
 	$rootScope.hibachiScope.getCart();
+    $rootScope.hibachiScope.getCountries();
+    $rootScope.hibachiScope.getStates(); 
 	$rootScope.slatwall = $rootScope.hibachiScope;
+    $rootScope.slatwall.getProcessObject = $hibachi.newEntity;
+    
+    
 }])
 
 //constants
@@ -35,11 +39,6 @@ var frontendmodule = angular.module('frontend', [ngslatwallmodelmodule.name])
 .controller('frontendController',FrontendController)
 //directives
 .directive('swfDirective', SWFDirective.Factory())
-.directive('swfCart', SWFCart.Factory())
-.directive('swfCreateAccount', SWFCreateAccount.Factory())
-.directive('swfLogin', SWFLogin.Factory())
-.directive('swfLogout', SWFLogout.Factory())
-.directive('swfPromo', 	SWFPromo.Factory());
 
 export{
 	frontendmodule

@@ -1,5 +1,5 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
+/// <reference path='../../../typings/tsd.d.ts' />
 
 
 class SWActionCallerController{
@@ -14,8 +14,9 @@ class SWActionCallerController{
     public text:string;
     public disabled:boolean;
     public actionItemEntityName:string;
-    public pathBuilderConfig:any;
+    public hibachiPathBuilder:any;
     public formCtrl:any;
+    public isPublic:string;
     //@ngInject
     constructor(
         private $scope,
@@ -24,19 +25,20 @@ class SWActionCallerController{
         private $compile:ng.ICompileService,
         private corePartialsPath,
         private utilityService,
-        private $slatwall,
-        pathBuilderConfig
+        private $hibachi,
+        private rbkeyService,
+        hibachiPathBuilder
     ){
         this.$scope = $scope;
         this.$element = $element;
         this.$templateRequest = $templateRequest;
         this.$compile = $compile;
-
-        this.$slatwall = $slatwall;
+        this.rbkeyService = rbkeyService;
+        this.$hibachi = $hibachi;
         this.utilityService = utilityService;
-        this.pathBuilderConfig = pathBuilderConfig;
+        this.hibachiPathBuilder = hibachiPathBuilder;
 
-        this.$templateRequest(this.pathBuilderConfig.buildPartialsPath(corePartialsPath)+"actioncaller.html").then((html)=>{
+        this.$templateRequest(this.hibachiPathBuilder.buildPartialsPath(corePartialsPath)+"actioncaller.html").then((html)=>{
             var template = angular.element(html);
             this.$element.parent().append(template);
             $compile(template)($scope);
@@ -48,20 +50,18 @@ class SWActionCallerController{
     public init = ():void =>{
 //			this.class = this.utilityService.replaceAll(this.utilityService.replaceAll(this.getAction(),':',''),'.','') + ' ' + this.class;
         this.type = this.type || 'link';
-
-            if (this.type == "button"){
+        if (this.type == "button" || this.type== "submit" || this.isPublic){
                 //handle submit.
                 /** in order to attach the correct controller to local vm, we need a watch to bind */
-                var unbindWatcher = this.$scope.$watch(() => { return this.$scope.frmController; }, (newValue, oldValue) => {
+                var unbindWatcher = this.$scope.$watch(() => { return this.$scope.formController; }, (newValue, oldValue) => {
                     if (newValue !== undefined){
                         this.formCtrl = newValue;
-
+                        unbindWatcher();
                     }
-
-                    unbindWatcher();
                 });
 
             }
+            
 //			this.actionItem = this.getActionItem();
 //			this.actionItemEntityName = this.getActionItemEntityName();
 //			this.text = this.getText();
@@ -85,11 +85,10 @@ class SWActionCallerController{
         </cfif>
         */
     }
-
+    /** submit function delegates back to the form */
     public submit = () => {
-
-            this.formCtrl.submit(this.action);
-        }
+        this.formCtrl.submit(this.action);
+    }
 
     public getAction = ():string =>{
 
@@ -132,15 +131,15 @@ class SWActionCallerController{
     }
 
     private getTextByRBKeyByAction = (actionItemType:string, plural:boolean=false):string =>{
-        var navRBKey = this.$slatwall.getRBKey('admin.define.'+actionItemType+'_nav');
+        var navRBKey = this.rbkeyService.getRBKey('admin.define.'+actionItemType+'_nav');
 
         var entityRBKey = '';
         var replaceKey = '';
         if(plural){
-            entityRBKey = this.$slatwall.getRBKey('entity.'+this.actionItemEntityName+'_plural');
+            entityRBKey = this.rbkeyService.getRBKey('entity.'+this.actionItemEntityName+'_plural');
             replaceKey = '${itemEntityNamePlural}';
         }else{
-            entityRBKey = this.$slatwall.getRBKey('entity.'+this.actionItemEntityName);
+            entityRBKey = this.rbkeyService.getRBKey('entity.'+this.actionItemEntityName);
             replaceKey = '${itemEntityName}';
         }
 
@@ -150,7 +149,7 @@ class SWActionCallerController{
     public getText = ():string =>{
         //if we don't have text then make it up based on rbkeys
         if(angular.isUndefined(this.text) || (angular.isDefined(this.text) && !this.text.length)){
-            this.text = this.$slatwall.getRBKey(this.utilityService.replaceAll(this.getAction(),":",".")+'_nav');
+            this.text = this.rbkeyService.getRBKey(this.utilityService.replaceAll(this.getAction(),":",".")+'_nav');
             var minus8letters = this.utilityService.right(this.text,8);
             //if rbkey is still missing. then can we infer it
             if(minus8letters === '_missing'){
@@ -175,7 +174,7 @@ class SWActionCallerController{
             }
 
             if(this.utilityService.right(this.text,8)){
-                this.text = this.$slatwall.getRBKey(this.utilityService.replaceAll(this.getAction(),":","."));
+                this.text = this.rbkeyService.getRBKey(this.utilityService.replaceAll(this.getAction(),":","."));
             }
 
         }
@@ -200,7 +199,7 @@ class SWActionCallerController{
             //and no disabled text specified
             if(angular.isUndefined(this.disabledtext) || !this.disabledtext.length ){
                 var disabledrbkey = this.utilityService.replaceAll(this.action,':','.')+'_disabled';
-                this.disabledtext = this.$slatwall.getRBKey(disabledrbkey);
+                this.disabledtext = this.rbkeyService.getRBKey(disabledrbkey);
             }
             //add disabled class
             this.class += " s-btn-disabled";
@@ -223,7 +222,7 @@ class SWActionCallerController{
         if(this.getConfirm() ){
             if(angular.isUndefined(this.confirmtext) && this.confirmtext.length){
                 var confirmrbkey = this.utilityService.replaceAll(this.action,':','.')+'_confirm';
-                this.confirmtext = this.$slatwall.getRBKey(confirmrbkey);
+                this.confirmtext = this.rbkeyService.getRBKey(confirmrbkey);
                 /*<cfif right(attributes.confirmtext, "8") eq "_missing">
                     <cfset attributes.confirmtext = replace(attributes.hibachiScope.rbKey("admin.define.delete_confirm"),'${itemEntityName}', attributes.hibachiScope.rbKey('entity.#actionItemEntityName#'), "all") />
                 </cfif>*/
@@ -235,6 +234,10 @@ class SWActionCallerController{
     }
 }
 
+
+interface IActionCallerScope extends ng.IScope {
+    formController: ng.IFormController
+}
 class SWActionCaller implements ng.IDirective{
     public restrict:string = 'EA';
     public scope:any={};
@@ -254,43 +257,30 @@ class SWActionCaller implements ng.IDirective{
         disabledtext:"@",
         modal:"=",
         modalFullWidth:"=",
-        id:"@"
+        id:"@",
+        isPublic: "@?"
     };
     public controller=SWActionCallerController;
     public controllerAs="swActionCaller";
+    public require="^?swForm"
     public templateUrl;
+    
     public static Factory():ng.IDirectiveFactory{
-        var directive:ng.IDirectiveFactory = (
-            partialsPath,
-            utiltiyService,
-            $slatwall
-        ) => new SWActionCaller(
-            partialsPath,
-            utiltiyService,
-            $slatwall
-        );
-        directive.$inject = [
-            'partialsPath',
-            'utilityService',
-            '$slatwall'
-        ];
+        var directive:ng.IDirectiveFactory = () => new SWActionCaller();
         return directive;
     }
 
-    constructor(
-        public partialsPath,
-        public utiltiyService,
-        public $slatwall
-        ){
-    }
+    constructor(){}
 
-    public link:ng.IDirectiveLinkFn = (scope: ng.IScope, element: ng.IAugmentedJQuery, attrs:ng.IAttributes) =>{
+    public link:ng.IDirectiveLinkFn = (scope: IActionCallerScope, element: ng.IAugmentedJQuery, attrs:ng.IAttributes, formController) =>{
+        if (angular.isDefined(formController)){
+            scope.formController = formController;    
+        }
     }
 }
+
 export{
     SWActionCaller,
     SWActionCallerController
 }
-	//angular.module('slatwalladmin').directive('swActionCaller',[() => new SWActionCaller()]);
-
 

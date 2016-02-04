@@ -1,4 +1,4 @@
-/// <reference path='../../../typings/slatwallTypescript.d.ts' />
+/// <reference path='../../../typings/hibachiTypescript.d.ts' />
 /// <reference path='../../../typings/tsd.d.ts' />
 class SWCollectionTable{
 
@@ -7,53 +7,53 @@ class SWCollectionTable{
 			$http,
 			$compile,
 			$log,
-			pathBuilderConfig,
+			hibachiPathBuilder,
 			collectionPartialsPath,
 			paginationService,
 			selectionService,
-			$slatwall
+			$hibachi
 		) => new SWCollectionTable(
 			$http,
-			$compile,
-			$log,
-			pathBuilderConfig,
-			collectionPartialsPath,
-			paginationService,
-			selectionService,
-			$slatwall
+            $compile,
+            $log,
+            hibachiPathBuilder,
+            collectionPartialsPath,
+            paginationService,
+            selectionService,
+            $hibachi
 		);
 		directive.$inject = [
 			'$http',
-			'$compile',
-			'$log',
-			'pathBuilderConfig',
-			'collectionPartialsPath',
-			'paginationService',
-			'selectionService',
-			'$slatwall',
+            '$compile',
+            '$log',
+            'hibachiPathBuilder',
+            'collectionPartialsPath',
+            'paginationService',
+            'selectionService',
+            '$hibachi'
 		];
 		return directive;
 	}
-	//ngInject
+	//@ngInject
 	constructor(
 		$http,
-		$compile,
-		$log,
-		pathBuilderConfig,
-		collectionPartialsPath,
-		paginationService,
-		selectionService,
-		$slatwall
+        $compile,
+        $log,
+        hibachiPathBuilder,
+        collectionPartialsPath,
+        paginationService,
+        selectionService,
+        $hibachi
 	){
 		return {
 			restrict: 'E',
-			templateUrl:pathBuilderConfig.buildPartialsPath(collectionPartialsPath)+"collectiontable.html",
+			templateUrl:hibachiPathBuilder.buildPartialsPath(collectionPartialsPath)+"collectiontable.html",
 			scope:{
 				collection:"=",
 				collectionConfig:"=",
-				isRadio:"=",
+				isRadio:"=?",
                 //angularLink:true || false
-                angularLinks:"="
+                angularLinks:"=?"
 			},
 			link: function(scope,element,attrs){
 
@@ -62,8 +62,8 @@ class SWCollectionTable{
                 }
 				console.log('here');
                 console.log(scope.collection);
-				console.log($slatwall);
-                scope.collectionObject = $slatwall['new'+scope.collection.collectionObject]();
+				console.log($hibachi);
+                scope.collectionObject = $hibachi['new'+scope.collection.collectionObject]();
 
                 var escapeRegExp = function(str) {
                     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");

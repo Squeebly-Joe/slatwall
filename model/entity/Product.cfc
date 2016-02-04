@@ -122,6 +122,7 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 	property name="nextSkuCodeCount" persistent="false";
 	property name="optionGroupCount" type="numeric" persistent="false";
 	property name="productBundleGroupsCount" type="numeric" persistent="false";
+	property name="defaultProductImageFilesCount" type="numeric" persistent="false";
 	property name="placedOrderItemsSmartList" type="any" persistent="false";
 	property name="qats" type="numeric" persistent="false";
 	property name="salePriceDetailsForSkus" type="struct" persistent="false";
@@ -170,6 +171,10 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 			var records = smartList.getRecords();
 
 			variables.productTypeOptions = [];
+
+			if(arrayLen(records) > 1){
+				arrayAppend(variables.productTypeOptions, {name=getHibachiScope().getRbKey('processObject.Product_Create.selectProductType'),value=""});
+			}
 
 			for(var i=1; i<=arrayLen(records); i++) {
 				var recordStruct = {};
@@ -239,7 +244,7 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 	}
 
 	public numeric function getTotalImageCount(){
-		return ArrayLen(this.getImages()) + ArrayLen(this.getDefaultProductImageFiles());
+		return this.getProductImagesCount() + this.getDefaultProductImageFilesCount();
 	}
 
 	public struct function getSkuSalePriceDetails( required any skuID) {
@@ -682,7 +687,9 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 	// ============ START: Non-Persistent Property Methods =================
 
 	public any function getBaseProductType() {
-		return getProductType().getBaseProductType();
+		if(!isNull(getProductType())){
+			return getProductType().getBaseProductType();
+		}
 	}
 
 	public any function getBundleSkusSmartList() {
@@ -712,6 +719,18 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 			}
 		}
 		return variables.defaultProductImageFiles;
+	}
+
+	public numeric function getDefaultProductImageFilesCount() {
+		if(!structKeyExists(variables,"defaultProductImageFilesCount")){
+			variables.defaultProductImageFilesCount = 0;
+			for(var imageFile in this.getDefaultProductImageFiles()){
+				if(fileExists(expandPath(this.getHibachiScope().getBaseImageURL() & "/product/default/#imageFile#"))){
+					variables.defaultProductImageFilesCount++;
+				}
+			}
+		}
+		return variables.defaultProductImageFilesCount;
 	}
 
 	public struct function getSalePriceDetailsForSkus() {
@@ -1024,7 +1043,7 @@ component displayname="Product" entityname="SlatwallProduct" table="SwProduct" p
 			var skuCode = this.getProductCode() & "-#skusCount + 1#";
 			arguments.sku.setSkuCode(skuCode);
 		}
-		
+
 		arguments.sku.setProduct( this );
 	}
 	public void function removeSku(required any sku) {
