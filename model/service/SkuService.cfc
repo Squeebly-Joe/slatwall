@@ -446,7 +446,7 @@ component extends="HibachiService" persistent="false" accessors="true" output="f
 		makeupItem.setToStock( makeupStock );
 
 		// Loop over every bundledSku
-		for(bundledSku in arguments.entity.getBundledSkus()) {
+		for(var bundledSku in arguments.entity.getBundledSkus()) {
 
 			var thisStock = getStockService().getStockBySkuAndLocation( sku=bundledSku.getBundledSku(), location=arguments.processObject.getLocation() );
 
