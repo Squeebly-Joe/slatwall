@@ -25,7 +25,11 @@ class SWClickOutside{
     ){}
     
     public link:ng.IDirectiveLinkFn = (scope:any, elem:any, attr:any) => {     
+<<<<<<< HEAD
         this.$document.on('click', (e)=> {
+=======
+        this.$document.on('click', function (e) {
+>>>>>>> ten24/master
             if (!e || !e.target) return;
             
             //check if our element already hidden
