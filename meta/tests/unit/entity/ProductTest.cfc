@@ -147,7 +147,7 @@ component extends="Slatwall.meta.tests.unit.entity.SlatwallEntityTestBase" {
 
 		var productData = {
 			productID = '',
-			productName = 'TestName',
+			productName = '',
 			skus = [
 				{
 					skuID = CreateUUID()
@@ -160,7 +160,7 @@ component extends="Slatwall.meta.tests.unit.entity.SlatwallEntityTestBase" {
 		product.getSkus()[1].addOption(og2.getOptions()[1]);
 		product.getSkus()[1].addOption(og3.getOptions()[1]);
 
-		addToDebug(product.getNumberOfUnusedProductOptionCombinations());
+		request.debug(product.getNumberOfUnusedProductOptionCombinations());
 
 		assertEquals(8, product.getNumberOfUnusedProductOptionCombinations());
 		assertTrue(product.hasUnusedProductOptionCombinations());
@@ -215,7 +215,7 @@ component extends="Slatwall.meta.tests.unit.entity.SlatwallEntityTestBase" {
 
 		var productData = {
 			productID = '',
-			productName = 'TestName',
+			productName = '',
 			skus = [
 				{
 					skuID = ''
@@ -228,15 +228,17 @@ component extends="Slatwall.meta.tests.unit.entity.SlatwallEntityTestBase" {
 		product.getSkus()[1].addOption(og2.getOptions()[1]);
 		product.getSkus()[1].addOption(og3.getOptions()[1]);
 
-		addToDebug(og1.getOptions()[1].getOptionID());
-		addToDebug("|       |");
-		addToDebug(og2.getOptions()[1].getOptionID());
-		addToDebug("|       |");
-		addToDebug(og3.getOptions()[1].getOptionID());
+		request.debug(og1.getOptions()[1].getOptionID());
+		request.debug("|       |");
+		request.debug(og2.getOptions()[1].getOptionID());
+		request.debug("|       |");
+		request.debug(og3.getOptions()[1].getOptionID());
 
-		addToDebug(product.getNumberOfUnusedProductOptionCombinations());
+		request.debug(product.getNumberOfUnusedProductOptionCombinations());
 
 		assertEquals(0, product.getNumberOfUnusedProductOptionCombinations());
 		assertFalse(product.hasUnusedProductOptionCombinations());
 	}
 }
+
+

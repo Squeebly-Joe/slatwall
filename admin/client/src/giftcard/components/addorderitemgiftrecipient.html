@@ -40,7 +40,8 @@
 	<div class="s-search-filter">
 
 		<div sw-typeahead-search 
-            data-collection-config="addGiftRecipientControl.typeaheadCollectionConfig"            
+            data-entity="Account"
+            data-properties="accountID"
             data-placeholder-text="Search or Add Recipient..."
             data-add-function="addGiftRecipientControl.addGiftRecipientFromAccountList"
             data-add-button-function="addGiftRecipientControl.startFormWithName">

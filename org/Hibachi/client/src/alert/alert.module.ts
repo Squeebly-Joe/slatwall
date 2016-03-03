@@ -3,7 +3,7 @@
 //controllers
 import {AlertController} from "./controllers/alertcontroller";
 //services
-import {AlertService} from "./service/alertservice";
+import {AlertService} from "./service/alertService";
 var alertmodule = angular.module('hibachi.alert',[])
 //controllers
 .controller('alertController',AlertController)

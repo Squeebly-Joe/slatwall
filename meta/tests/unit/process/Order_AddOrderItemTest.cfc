@@ -149,6 +149,7 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 	public void function test_gift_card_add_order_item(){
 
 		var giftProduct = getTestProduct("TestGiftProduct");
+		giftProduct.setPrice('10.00');
 
 		var giftSku = getTestSku('TestGiftSku');
 		giftSku.setCurrencyCode('USD');
@@ -198,14 +199,14 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 
 		var productData = {
 			productID="",
-			productName=arguments.testproduct,
-			productType={
-				productTypeID="50cdfabbc57f7d103538d9e0e37f61e4"
-			}
+			productName=arguments.testproduct
 		};
 
-		var product = createPersistedTestEntity('Product', productData);
-		
+		var product = createPersistedTestEntity('Product');
+		var productType = request.slatwallScope.getService("ProductService").getProductType("50cdfabbc57f7d103538d9e0e37f61e4");
+
+		product.setProductType(productType);
+
 		return product;
 	}
 

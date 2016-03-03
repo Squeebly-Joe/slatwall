@@ -56,6 +56,10 @@ component extends="mxunit.framework.TestCase" output="false" {
 
 		// Setup Components
 		variables.slatwallFW1Application = createObject("component", "Slatwall.Application");
+		variables.configureTestUtility = createObject("component", "Slatwall.meta.tests.ConfigureTestUtility").init( variables.slatwallFW1Application );
+
+		// Read Config
+		variables.configuration = variables.configureTestUtility.readLocalConfiguration();
 
 		super.beforeTests();
 	}
@@ -71,10 +75,11 @@ component extends="mxunit.framework.TestCase" output="false" {
 		variables.persistentEntities = [];
 	}
 
-	// AFTER EACH TEST
+	// AFTER BEACH TEST
 	public void function tearDown() {
-		debug(variables.debugArray);
-
+		if(!structKeyExists(variables.configuration.common, "outputdebug") || variables.configuration.common.outputdebug) {
+			debug(variables.debugArray);
+		}
 		variables.debugArray = [];
 
 		var flushRequired = false;
@@ -93,8 +98,6 @@ component extends="mxunit.framework.TestCase" output="false" {
 		}
 
 		variables.persistentEntities = [];
-
-		ormClearSession();
 
 		structDelete(request, 'slatwallScope');
 	}

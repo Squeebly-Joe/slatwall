@@ -61,7 +61,7 @@ component  extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" hint="Tests t
 	}
 	
 	public void function setupTest(){
-		addToDebug(variables.jwt);
+		request.debug(variables.jwt);
 	}
 	
 	

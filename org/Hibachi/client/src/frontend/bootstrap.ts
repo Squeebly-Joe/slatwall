@@ -7,8 +7,8 @@ import {frontendmodule} from "./frontend.module";
 //custom bootstrapper
 class bootstrapper extends BaseBootStrapper{
     constructor(){
-
-      var angular:any = super(frontendmodule.name);
+      this.myApplication = frontendmodule.name;
+      var angular:any = super();
       angular.bootstrap()
     }
 }

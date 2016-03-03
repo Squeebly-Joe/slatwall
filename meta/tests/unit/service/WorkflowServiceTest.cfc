@@ -118,7 +118,7 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 		};
 		variables.service.processWorkflow_execute(workflowEntity,data);
 		
-		////addToDebug(workflowEntity.getWorkflowID());
+		////request.debug(workflowEntity.getWorkflowID());
 	}*/
 	
 	public void function entityPassesAllWorkflowTaskConditionsTest(){
@@ -261,9 +261,9 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 		MakePublic(variables.service,'entityPassesAllWorkflowTaskConditions');
 			MakePublic(variables.service,'getWorkflowConditionGroupsString');
 		var conditionsGroupString = variables.service.getWorkflowConditionGroupsString(product,workflowTasksConditionsConfigStruct.filterGroups);	
-		addToDebug(conditionsGroupString);
+		request.debug(conditionsGroupString);
 		var evalString = variables.service.entityPassesAllWorkflowTaskConditions(product, workflowTasksConditionsConfigStruct);
-		addToDebug(evalString);
+		request.debug(evalString);
 	}
 	
 	public void function getWOrkflowConditionGroupStringTest(){
@@ -401,7 +401,7 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 		var workflowTasksConditionsConfigStruct = deserializeJson(workflowTasksConditionsConfig);
 		MakePublic(variables.service,'getWorkflowConditionGroupString');
 		var conditionsGroupString = variables.service.getWorkflowConditionGroupString(product,workflowTasksConditionsConfigStruct);	
-		addToDebug(conditionsGroupString);
+		request.debug(conditionsGroupString);
 	}
 	
 	public void function getValidationValue(){
@@ -420,7 +420,7 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 		var product = createPersistedTestEntity('product',productData);
 		Product.setDefaultSku(Product.getSkus()[1]);
 		var test = request.slatwallScope.getBean("HibachiValidationService").invokeMethod('validate_eq',{1=product, 2='activeFlag', 3='true'});
-		addToDebug(test);
+		request.debug(test);
 	}
 	
 	public void function getWorkflowConditionGroupsStringTest(){
@@ -559,7 +559,7 @@ component extends="Slatwall.meta.tests.unit.SlatwallUnitTestBase" {
 		var workflowTasksConditionsConfigStruct = deserializeJson(workflowTasksConditionsConfig);
 		MakePublic(variables.service,'getWorkflowConditionGroupsString');
 		var conditionsGroupString = variables.service.getWorkflowConditionGroupsString(product,workflowTasksConditionsConfigStruct);	
-		addToDebug(conditionsGroupString);
+		request.debug(conditionsGroupString);
 	}
 	
 	
